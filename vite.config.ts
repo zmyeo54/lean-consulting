@@ -154,6 +154,12 @@ const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(
 
 export default defineConfig({
   plugins,
+  // ADD THIS DEFINE BLOCK HERE TO FORCE GLOBAL SUBSTITUTION:
+  define: {
+    "process.env.VITE_API_URL": JSON.stringify(process.env.VITE_API_URL || "https://lean-consulting.vercel.app"),
+    "process.env.VITE_ANALYTICS_ENDPOINT": JSON.stringify(process.env.VITE_ANALYTICS_ENDPOINT || "https://lean-consulting.vercel.app"),
+    "process.env.OAUTH_SERVER_URL": JSON.stringify(process.env.OAUTH_SERVER_URL || "https://lean-consulting.vercel.app"),
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -168,6 +174,7 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
   },
+  // ... (keep the server host/allowedHosts configuration the same)
   server: {
     host: true,
     allowedHosts: [
