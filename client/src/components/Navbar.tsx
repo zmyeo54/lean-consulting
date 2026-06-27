@@ -94,12 +94,19 @@ export default function Navbar() {
 
           {/* CTA */}
           <div className="hidden lg:flex items-center gap-3">
+            <a
+              href="/admin/login"
+              className={`text-xs font-medium tracking-wide transition-colors duration-200 ${
+                scrolled ? "text-[#1A1513] hover:text-[#8b0000]" : "text-white/80 hover:text-white"
+              }`}
+            >
+              Admin
+            </a>
             <button
               onClick={() => handleNavClick("#contact")}
               className={`text-xs font-medium tracking-wide transition-colors duration-200 ${
                 scrolled ? "text-[#1A1513] hover:text-[#8b0000]" : "text-white/80 hover:text-white"
               }`}
-              style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif" }}
             >
               Contact
             </button>

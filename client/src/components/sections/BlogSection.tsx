@@ -32,17 +32,11 @@ export default function BlogSection() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-14 gap-6">
           <div>
             <div className="section-label mb-4">Insights from the Field</div>
-            <h2
-              className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight max-w-lg"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
+            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1513] leading-tight max-w-lg">
               Practical ERP guidance from the field.
             </h2>
           </div>
-          <button
-            className="btn-press inline-flex items-center gap-2 text-sm font-semibold shrink-0"
-            style={{ color: "oklch(0.28 0.14 20)", fontFamily: "'DM Sans', sans-serif" }}
-          >
+          <button className="btn-press inline-flex items-center gap-2 text-sm font-semibold shrink-0 text-[#8b0000] hover:text-[#6b0000] transition-colors">
             Read the blog
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -54,58 +48,30 @@ export default function BlogSection() {
           {articles.map((art) => (
             <article
               key={art.title}
-              className="card-hover group border border-gray-100 rounded-sm overflow-hidden bg-white cursor-pointer"
+              className="card-hover group border-2 border-[#E6DFD5] rounded-lg overflow-hidden bg-white cursor-pointer hover:border-[#D4AF37] transition-all"
             >
               {/* Top accent bar */}
-              <div
-                className="h-0.5 w-full"
-                style={{ backgroundColor: "oklch(0.28 0.14 20)", opacity: 0.15 }}
-              />
+              <div className="h-1 w-full bg-[#8b0000]" />
 
               <div className="p-7">
                 {/* Meta */}
                 <div className="flex items-center gap-3 mb-5">
-                  <span
-                    className="text-[10px] font-bold tracking-[0.12em] uppercase"
-                    style={{
-                      color: "oklch(0.28 0.14 20)",
-                      fontFamily: "'DM Sans', sans-serif",
-                    }}
-                  >
+                  <span className="text-[10px] font-bold tracking-[0.12em] uppercase text-[#8b0000]">
                     {art.category}
                   </span>
-                  <span
-                    className="text-[10px] text-gray-300"
-                    style={{ fontFamily: "'DM Sans', sans-serif" }}
-                  >
-                    ·
-                  </span>
-                  <span
-                    className="text-[10px] text-gray-400"
-                    style={{ fontFamily: "'DM Sans', sans-serif" }}
-                  >
-                    {art.readTime}
-                  </span>
+                  <span className="text-[10px] text-[#E6DFD5]">·</span>
+                  <span className="text-[10px] text-[#6B6158]">{art.readTime}</span>
                 </div>
 
-                <h3
-                  className="text-lg font-bold text-gray-900 mb-3 leading-snug group-hover:text-[oklch(0.28_0.14_20)] transition-colors duration-200"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
-                >
+                <h3 className="text-lg font-bold text-[#1A1513] mb-3 leading-snug group-hover:text-[#8b0000] transition-colors duration-200">
                   {art.title}
                 </h3>
 
-                <p
-                  className="text-sm text-gray-500 leading-relaxed"
-                  style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
-                >
+                <p className="text-sm text-[#6B6158] leading-relaxed font-light">
                   {art.desc}
                 </p>
 
-                <div
-                  className="mt-6 flex items-center gap-1.5 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  style={{ color: "oklch(0.28 0.14 20)", fontFamily: "'DM Sans', sans-serif" }}
-                >
+                <div className="mt-6 flex items-center gap-1.5 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[#8b0000]">
                   Read article
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

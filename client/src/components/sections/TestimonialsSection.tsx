@@ -1,7 +1,7 @@
 /**
  * TestimonialsSection — Lean Consulting
- * Style: Light gray background, large quote cards
- * Brand: Crimson quote marks, Playfair quote text
+ * Style: Light cream background, testimonial cards
+ * Brand: Burgundy accents, consistent typography
  */
 
 const testimonials = [
@@ -27,64 +27,38 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   return (
-    <section
-      id="testimonials"
-      className="py-24"
-      style={{ backgroundColor: "oklch(0.97 0.002 285)" }}
-    >
+    <section id="testimonials" className="py-32 bg-[#FAF7F2]">
       <div className="container">
-        <div className="mb-14">
-          <div className="section-label mb-4">Client Results</div>
-          <h2
-            className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight max-w-xl"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
+        <div className="mb-16">
+          <div className="section-label mb-6">Client Results</div>
+          <h2 className="text-4xl md:text-5xl font-bold text-[#1A1513] leading-tight max-w-xl">
             What our clients say.
           </h2>
-          <p
-            className="mt-4 text-sm text-gray-500 max-w-sm"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
-          >
+          <p className="mt-4 text-sm text-[#6B6158] max-w-sm font-light">
             We measure success by business outcomes, not project completion.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
+          {testimonials.map((t) => (
             <div
               key={t.name}
-              className="card-hover p-8 bg-white rounded-sm border border-gray-100 shadow-sm flex flex-col"
+              className="card-hover p-8 bg-white rounded-lg border-2 border-[#E6DFD5] hover:border-[#D4AF37] transition-all shadow-sm flex flex-col"
             >
               {/* Quote mark */}
-              <div
-                className="text-5xl font-black leading-none mb-4 select-none"
-                style={{
-                  color: "oklch(0.28 0.14 20)",
-                  fontFamily: "'Playfair Display', serif",
-                  opacity: 0.25,
-                }}
-              >
+              <div className="text-5xl font-black leading-none mb-4 select-none text-[#8b0000] opacity-20">
                 "
               </div>
 
-              <blockquote
-                className="text-sm text-gray-700 leading-relaxed flex-1 mb-6"
-                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
-              >
+              <blockquote className="text-sm text-[#6B6158] leading-relaxed flex-1 mb-6 font-light">
                 {t.quote}
               </blockquote>
 
-              <div className="border-t border-gray-100 pt-5">
-                <div
-                  className="text-sm font-semibold text-gray-900"
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
-                >
+              <div className="border-t border-[#E6DFD5] pt-5">
+                <div className="text-sm font-semibold text-[#1A1513]">
                   {t.name}
                 </div>
-                <div
-                  className="text-xs text-gray-400 mt-0.5"
-                  style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
-                >
+                <div className="text-xs text-[#8b0000] mt-0.5 font-light">
                   {t.role}
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { useLocation } from "wouter";
 export default function AdminBlog() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -20,16 +21,21 @@ export default function AdminBlog() {
     readTime: 5,
   });
 
-  // Redirect if not admin
-  if (user?.role !== "admin") {
+  useEffect(() => {
+    const loggedIn = sessionStorage.getItem("adminLoggedIn") === "true";
+    if (!loggedIn) {
+      setLocation("/admin/login");
+    } else {
+      setIsLoggedIn(true);
+    }
+  }, [setLocation]);
+
+  // Show loading while checking auth
+  if (!isLoggedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FAF7F2]">
         <Card className="p-8 text-center">
-          <h1 className="text-2xl font-bold text-[#1A1513] mb-4">Access Denied</h1>
-          <p className="text-[#6B6158] mb-6">You do not have permission to access the blog CMS.</p>
-          <Button onClick={() => setLocation("/")} className="bg-[#8b0000] hover:bg-[#6b0000]">
-            Return Home
-          </Button>
+          <h1 className="text-2xl font-bold text-[#1A1513] mb-4">Loading...</h1>
         </Card>
       </div>
     );
@@ -61,13 +67,27 @@ export default function AdminBlog() {
     }
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem("adminLoggedIn");
+    sessionStorage.removeItem("adminUsername");
+    setLocation("/");
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF7F2] py-12">
       <div className="max-w-6xl mx-auto px-6">
-        {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-[#1A1513] mb-2">Blog CMS</h1>
-          <p className="text-[#6B6158]">Manage your blog articles and content</p>
+        {/* Header with Logout */}
+        <div className="flex justify-between items-center mb-12">
+          <div>
+            <h1 className="text-4xl font-bold text-[#1A1513] mb-2">Blog CMS</h1>
+            <p className="text-[#6B6158]">Manage your blog articles and content</p>
+          </div>
+          <Button
+            onClick={handleLogout}
+            className="bg-[#8b0000] hover:bg-[#6b0000] text-white"
+          >
+            Logout
+          </Button>
         </div>
 
         {/* Create Article Form */}
