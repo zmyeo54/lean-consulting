@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import RichTextEditor from "@/components/RichTextEditor";
 import { migrateExistingBlogPosts } from "@/lib/blogMigration";
 
 export default function AdminBlog() {
@@ -153,6 +154,10 @@ export default function AdminBlog() {
     });
     setIsEditing(article.id);
     setIsCreating(true);
+    // Scroll to form
+    setTimeout(() => {
+      document.querySelector('[data-form-section]')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   return (
@@ -174,7 +179,7 @@ export default function AdminBlog() {
 
         {/* Create/Edit Article Form */}
         {isCreating && (
-          <Card className="p-8 mb-8 border-2 border-[#D4AF37]">
+          <Card className="p-8 mb-8 border-2 border-[#D4AF37]" data-form-section>
             <h2 className="text-2xl font-bold text-[#1A1513] mb-6">
               {isEditing ? "Edit Article" : "Create New Article"}
             </h2>
@@ -339,62 +344,14 @@ export default function AdminBlog() {
 
               <div>
                 <label className="block text-sm font-semibold text-[#1A1513] mb-2">
-                  Content (Rich Text)
+                  Content (Rich Text Editor)
                 </label>
-                <div className="border-2 border-[#E6DFD5] rounded-lg p-4 bg-white">
-                  <div className="mb-3 flex gap-2 flex-wrap border-b pb-3">
-                    <button
-                      type="button"
-                      onClick={() => insertMarkdown("**", "**", "bold")}
-                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm font-bold"
-                      title="Bold"
-                    >
-                      B
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => insertMarkdown("_", "_", "italic")}
-                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm italic"
-                      title="Italic"
-                    >
-                      I
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => insertMarkdown("[", "](url)", "link")}
-                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm underline"
-                      title="Link"
-                    >
-                      Link
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => insertMarkdown("# ", "\n", "heading")}
-                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm font-bold"
-                      title="Heading"
-                    >
-                      H1
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => insertMarkdown("- ", "\n", "list")}
-                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm"
-                      title="List"
-                    >
-                      • List
-                    </button>
-                  </div>
-                  <Textarea
-                    value={formData.content}
-                    onChange={(e) =>
-                      setFormData({ ...formData, content: e.target.value })
-                    }
-                    placeholder="Full article content (supports markdown: **bold**, _italic_, [link](url), # heading, - list)"
-                    required
-                    rows={12}
-                    className="border-0 focus:ring-0 font-mono text-sm"
-                  />
-                </div>
+                <RichTextEditor
+                  value={formData.content}
+                  onChange={(content) =>
+                    setFormData({ ...formData, content })
+                  }
+                />
               </div>
 
               <div className="flex gap-3">
