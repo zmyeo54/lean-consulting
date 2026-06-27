@@ -1,7 +1,7 @@
 /**
  * Navbar — Lean Consulting
- * Style: Sticky top nav, transparent → opaque on scroll
- * Brand: Deep crimson (#8B0000 equivalent), DM Sans, minimal
+ * Style: Sticky top nav, Alabaster Cream bg, Burgundy text, Gold accents
+ * Brand: Century Gothic headings, Inter body, premium spacing
  */
 import { useState, useEffect } from "react";
 
@@ -38,7 +38,7 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100"
+          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-[#E6DFD5]"
           : "bg-transparent"
       }`}
     >
@@ -58,17 +58,17 @@ export default function Navbar() {
             <div className="flex flex-col leading-none">
               <span
                 className={`font-semibold text-sm tracking-tight transition-colors duration-300 ${
-                  scrolled ? "text-gray-900" : "text-white"
+                  scrolled ? "text-[#1A1513]" : "text-white"
                 }`}
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
+                style={{ fontFamily: "'Montserrat', 'Questrial', sans-serif" }}
               >
                 Lean Consulting
               </span>
               <span
                 className="text-[9px] tracking-[0.15em] uppercase font-medium"
                 style={{
-                  color: "oklch(0.28 0.14 20)",
-                  fontFamily: "'DM Sans', sans-serif",
+                  color: "#8b0000",
+                  fontFamily: "'Inter', 'Noto Sans', sans-serif",
                 }}
               >
                 Standard-First ERP
@@ -82,10 +82,10 @@ export default function Navbar() {
               <button
                 key={link.label}
                 onClick={() => handleNavClick(link.href)}
-                className={`text-xs font-medium tracking-wide transition-colors duration-200 hover:text-[oklch(0.28_0.14_20)] ${
-                  scrolled ? "text-gray-600" : "text-white/80"
+                className={`text-xs font-medium tracking-wide transition-colors duration-200 hover:text-[#8b0000] ${
+                  scrolled ? "text-[#1A1513]" : "text-white/80"
                 }`}
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
+                style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif" }}
               >
                 {link.label}
               </button>
@@ -97,22 +97,22 @@ export default function Navbar() {
             <button
               onClick={() => handleNavClick("#contact")}
               className={`text-xs font-medium tracking-wide transition-colors duration-200 ${
-                scrolled ? "text-gray-600 hover:text-gray-900" : "text-white/80 hover:text-white"
+                scrolled ? "text-[#1A1513] hover:text-[#8b0000]" : "text-white/80 hover:text-white"
               }`}
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
+              style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif" }}
             >
               Contact
             </button>
             <button
               onClick={() => handleNavClick("#contact")}
-              className="btn-press px-4 py-2 text-xs font-semibold text-white rounded-sm transition-all duration-200 hover:opacity-90"
+              className="btn-press px-4 py-2 text-xs font-semibold text-[#1A1513] rounded-md transition-all duration-200 hover:opacity-90"
               style={{
-                backgroundColor: "oklch(0.28 0.14 20)",
-                fontFamily: "'DM Sans', sans-serif",
+                backgroundColor: "#D4AF37",
+                fontFamily: "'Inter', 'Noto Sans', sans-serif",
                 letterSpacing: "0.02em",
               }}
             >
-              Book a Discovery Call
+              Get Started
             </button>
           </div>
 
@@ -125,17 +125,17 @@ export default function Navbar() {
             <div className="flex flex-col gap-1.5">
               <span
                 className={`block w-5 h-0.5 transition-all duration-200 ${
-                  scrolled ? "bg-gray-900" : "bg-white"
+                  scrolled ? "bg-[#1A1513]" : "bg-white"
                 } ${mobileOpen ? "rotate-45 translate-y-2" : ""}`}
               />
               <span
                 className={`block w-5 h-0.5 transition-all duration-200 ${
-                  scrolled ? "bg-gray-900" : "bg-white"
+                  scrolled ? "bg-[#1A1513]" : "bg-white"
                 } ${mobileOpen ? "opacity-0" : ""}`}
               />
               <span
                 className={`block w-5 h-0.5 transition-all duration-200 ${
-                  scrolled ? "bg-gray-900" : "bg-white"
+                  scrolled ? "bg-[#1A1513]" : "bg-white"
                 } ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`}
               />
             </div>
@@ -145,25 +145,25 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg">
+        <div className="lg:hidden bg-white border-t border-[#E6DFD5] shadow-lg">
           <div className="container py-4 flex flex-col gap-1">
             {navLinks.map((link) => (
               <button
                 key={link.label}
                 onClick={() => handleNavClick(link.href)}
-                className="text-left px-2 py-2.5 text-sm font-medium text-gray-700 hover:text-[oklch(0.28_0.14_20)] transition-colors"
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
+                className="text-left px-2 py-2.5 text-sm font-medium text-[#1A1513] hover:text-[#8b0000] transition-colors"
+                style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif" }}
               >
                 {link.label}
               </button>
             ))}
-            <div className="pt-3 border-t border-gray-100 mt-2">
+            <div className="pt-3 border-t border-[#E6DFD5] mt-2">
               <button
                 onClick={() => handleNavClick("#contact")}
-                className="btn-press w-full py-2.5 text-sm font-semibold text-white rounded-sm"
-                style={{ backgroundColor: "oklch(0.28 0.14 20)", fontFamily: "'DM Sans', sans-serif" }}
+                className="btn-press w-full py-2.5 text-sm font-semibold text-[#1A1513] rounded-md"
+                style={{ backgroundColor: "#D4AF37", fontFamily: "'Inter', 'Noto Sans', sans-serif" }}
               >
-                Book a Discovery Call
+                Get Started
               </button>
             </div>
           </div>

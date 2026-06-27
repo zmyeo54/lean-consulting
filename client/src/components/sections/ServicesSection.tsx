@@ -1,7 +1,7 @@
 /**
  * ServicesSection — Lean Consulting
- * Style: White background, labeled service cards
- * Brand: Crimson category labels, clean card layout
+ * Style: White background, burgundy category labels, gold accents
+ * Brand: Clean card layout with premium spacing
  */
 
 const services = [
@@ -39,62 +39,62 @@ const services = [
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="py-24 bg-white">
+    <section id="services" className="py-32 bg-white">
       <div className="container">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-14 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16 gap-8">
           <div>
-            <div className="section-label mb-4">Our Services</div>
+            <div className="section-label mb-6">Our Services</div>
             <h2
-              className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight max-w-lg"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-4xl md:text-5xl font-bold text-[#1A1513] leading-tight max-w-lg"
+              style={{ fontFamily: "'Montserrat', 'Questrial', sans-serif" }}
             >
               Consulting for the full ERP lifecycle.
             </h2>
           </div>
           <p
-            className="text-sm text-gray-500 max-w-xs leading-relaxed"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
+            className="text-sm text-[#6B6158] max-w-xs leading-relaxed"
+            style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif", fontWeight: 400 }}
           >
-            From initial advisory through to go-live and beyond — we provide
-            the expertise your business needs at every stage of the journey.
+            From initial advisory through to go-live and beyond — we provide the expertise 
+            your business needs at every stage of the journey.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((svc) => (
             <div
               key={svc.title}
-              className="card-hover group p-7 border border-gray-100 rounded-sm hover:border-gray-200 transition-all duration-200 bg-white"
+              className="card-hover group p-8 border-2 border-[#E6DFD5] rounded-lg hover:border-[#D4AF37] transition-all duration-200 bg-white"
             >
               {/* Category badge */}
               <div
-                className="inline-block text-[10px] font-bold tracking-[0.15em] uppercase mb-4 px-2 py-1 rounded-sm"
+                className="inline-block text-[10px] font-bold tracking-[0.15em] uppercase mb-5 px-2.5 py-1.5 rounded-md"
                 style={{
-                  color: "oklch(0.28 0.14 20)",
-                  backgroundColor: "oklch(0.28 0.14 20 / 0.07)",
-                  fontFamily: "'DM Sans', sans-serif",
+                  backgroundColor: "#8b0000",
+                  color: "white",
+                  fontFamily: "'Inter', 'Noto Sans', sans-serif",
                 }}
               >
                 {svc.category}
               </div>
 
               <h3
-                className="text-lg font-bold text-gray-900 mb-3"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-lg font-bold text-[#1A1513] mb-3"
+                style={{ fontFamily: "'Montserrat', 'Questrial', sans-serif" }}
               >
                 {svc.title}
               </h3>
 
               <p
-                className="text-sm text-gray-500 leading-relaxed"
-                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
+                className="text-sm text-[#6B6158] leading-relaxed"
+                style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif", fontWeight: 400 }}
               >
                 {svc.desc}
               </p>
 
               <div
-                className="mt-5 flex items-center gap-1.5 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                style={{ color: "oklch(0.28 0.14 20)", fontFamily: "'DM Sans', sans-serif" }}
+                className="mt-6 flex items-center gap-1.5 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                style={{ color: "#8b0000", fontFamily: "'Inter', 'Noto Sans', sans-serif" }}
               >
                 Learn more
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">

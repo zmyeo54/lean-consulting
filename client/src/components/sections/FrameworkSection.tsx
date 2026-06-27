@@ -1,7 +1,7 @@
 /**
  * FrameworkSection — Lean Consulting
- * Style: Light gray background, numbered step cards
- * Content: Updated 5-phase implementation framework
+ * Style: Cream background, numbered step cards with gold accents
+ * Brand: 5-phase implementation framework
  */
 
 const phases = [
@@ -36,51 +36,51 @@ export default function FrameworkSection() {
   return (
     <section
       id="framework"
-      className="py-24"
-      style={{ backgroundColor: "oklch(0.97 0.002 285)" }}
+      className="py-32"
+      style={{ backgroundColor: "#FAF7F2" }}
     >
       <div className="container">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-14 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16 gap-8">
           <div>
-            <div className="section-label mb-4">Implementation Framework</div>
+            <div className="section-label mb-6">Implementation Framework</div>
             <h2
-              className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight max-w-lg"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-4xl md:text-5xl font-bold text-[#1A1513] leading-tight max-w-lg"
+              style={{ fontFamily: "'Montserrat', 'Questrial', sans-serif" }}
             >
               A structured path to ERP success.
             </h2>
           </div>
           <p
-            className="text-sm text-gray-500 max-w-xs leading-relaxed"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
+            className="text-sm text-[#6B6158] max-w-xs leading-relaxed"
+            style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif", fontWeight: 400 }}
           >
-            Lean Consulting follows a structured implementation methodology
-            consisting of five phases — from discovery to lasting value.
+            Five phases — from discovery to lasting value. Each phase builds on the previous, 
+            ensuring your team is prepared and your system is optimized.
           </p>
         </div>
 
-        {/* Phase cards — horizontal timeline on desktop */}
+        {/* Phase cards */}
         <div className="grid md:grid-cols-5 gap-4">
           {phases.map((phase, i) => (
             <div
               key={phase.num}
-              className="card-hover relative p-6 bg-white rounded-sm border border-gray-100 shadow-sm group"
+              className="card-hover relative p-7 bg-white rounded-lg border-2 border-[#E6DFD5] hover:border-[#D4AF37] transition-all duration-200 group"
             >
               {/* Connector line */}
               {i < phases.length - 1 && (
                 <div
-                  className="hidden md:block absolute top-8 -right-2 w-4 h-px z-10"
-                  style={{ backgroundColor: "oklch(0.28 0.14 20)", opacity: 0.3 }}
+                  className="hidden md:block absolute top-12 -right-2 w-4 h-0.5 z-10"
+                  style={{ backgroundColor: "#D4AF37", opacity: 0.3 }}
                 />
               )}
 
               {/* Number */}
               <div
-                className="text-xs font-semibold mb-4 transition-colors duration-200 group-hover:text-[oklch(0.28_0.14_20)]"
+                className="text-xs font-bold mb-5 group-hover:text-[#D4AF37] transition-colors duration-200"
                 style={{
-                  color: "rgba(0,0,0,0.2)",
-                  fontFamily: "'DM Sans', sans-serif",
-                  letterSpacing: "0.05em",
+                  color: "#D4AF37",
+                  fontFamily: "'Inter', 'Noto Sans', sans-serif",
+                  letterSpacing: "0.08em",
                 }}
               >
                 {phase.num}
@@ -88,24 +88,24 @@ export default function FrameworkSection() {
 
               {/* Title */}
               <h3
-                className="text-lg font-bold text-gray-900 mb-3"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-lg font-bold text-[#1A1513] mb-3"
+                style={{ fontFamily: "'Montserrat', 'Questrial', sans-serif" }}
               >
                 {phase.title}
               </h3>
 
               {/* Description */}
               <p
-                className="text-sm text-gray-500 leading-relaxed"
-                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
+                className="text-sm text-[#6B6158] leading-relaxed"
+                style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif", fontWeight: 400 }}
               >
                 {phase.desc}
               </p>
 
               {/* Bottom accent */}
               <div
-                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                style={{ backgroundColor: "oklch(0.28 0.14 20)" }}
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                style={{ backgroundColor: "#8b0000" }}
               />
             </div>
           ))}

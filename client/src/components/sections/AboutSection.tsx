@@ -1,48 +1,43 @@
 /**
  * AboutSection — Lean Consulting
- * Style: White background, large text with crimson highlight, about image right
+ * Style: Cream background, generous padding, Montserrat headings
+ * Brand: Burgundy accents, high-end whitespace
  */
 export default function AboutSection() {
   return (
-    <section id="about" className="py-24 bg-white">
+    <section id="about" className="py-32 bg-white">
       <div className="container">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
+        <div className="grid lg:grid-cols-2 gap-24 items-center">
           {/* Left: Text */}
           <div>
-            <div className="section-label mb-6">Who We Are</div>
+            <div className="section-label mb-8">Who We Are</div>
             <p
-              className="text-3xl md:text-4xl font-light text-gray-800 leading-snug mb-8"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-3xl md:text-4xl font-bold text-[#1A1513] leading-snug mb-8"
+              style={{ fontFamily: "'Montserrat', 'Questrial', sans-serif" }}
             >
-              Lean Consulting is an independent ERP implementation consultancy
-              founded by former Odoo professionals. We believe successful ERP is
-              not about writing the most custom code — it is about{" "}
-              <span style={{ color: "oklch(0.28 0.14 20)" }}>
-                delivering maximum business value
-              </span>{" "}
-              with the least unnecessary complexity.
+              Lean Consulting is a fast-growing, premium platform-implementation startup 
+              specializing in 
+              <span style={{ color: "#8b0000" }}> fast-track configurations</span> for Odoo, HubSpot, and Salesforce.
             </p>
             <p
-              className="text-base text-gray-500 leading-relaxed"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
+              className="text-base text-[#6B6158] leading-relaxed"
+              style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif", fontWeight: 400 }}
             >
-              We are not a software reseller. We sell no licenses. Our only
-              incentive is your long-term success — which is why we recommend
-              standard capabilities first, and custom development only when it
-              creates genuine value.
+              Unlike traditional bloated agencies, our identity is built around speed, standard implementation, 
+              and zero engineering waste. We deliver maximum business value with the least unnecessary complexity.
             </p>
           </div>
 
           {/* Right: Image */}
           <div className="relative">
             <div
-              className="absolute -top-4 -left-4 w-full h-full border border-gray-200 rounded-sm"
+              className="absolute -top-6 -left-6 w-full h-full border-2 border-[#E6DFD5] rounded-lg"
               style={{ zIndex: 0 }}
             />
             <img
               src="/manus-storage/about-image_7b8d1082.jpg"
               alt="Lean Consulting team"
-              className="relative w-full h-80 lg:h-96 object-cover rounded-sm shadow-lg"
+              className="relative w-full h-80 lg:h-96 object-cover rounded-lg shadow-lg"
               style={{ zIndex: 1 }}
             />
           </div>
