@@ -10,6 +10,14 @@ import "./index.css";
 
 const queryClient = new QueryClient();
 
+// Helper to reliably construct an absolute API URL path avoiding relative initialization drops
+const getAbsoluteApiUrl = () => {
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/api/trpc`;
+  }
+  return "https://lean-consulting.vercel.app/api/trpc";
+};
+
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
@@ -40,7 +48,7 @@ queryClient.getMutationCache().subscribe(event => {
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: "/api/trpc",
+      url: getAbsoluteApiUrl(),
       transformer: superjson,
       headers() {
         // Preview auto-login fallback: when the browser blocks iframe cookies
@@ -63,7 +71,9 @@ const trpcClient = trpc.createClient({
         return {};
       },
       fetch(input, init) {
-        return globalThis.fetch(input, {
+        // Force evaluation check to guarantee input is a valid absolute string object
+        const targetUrl = typeof input === "string" ? input : (input as Request).url;
+        return globalThis.fetch(targetUrl, {
           ...(init ?? {}),
           credentials: "include",
         });
