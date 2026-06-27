@@ -96,11 +96,11 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-3">
             <a
               href="/admin/login"
-              className={`text-xs font-medium tracking-wide transition-colors duration-200 ${
-                scrolled ? "text-[#1A1513] hover:text-[#8b0000]" : "text-white/80 hover:text-white"
+              className={`text-xs font-medium tracking-wide transition-colors duration-200 opacity-60 hover:opacity-100 ${
+                scrolled ? "text-[#6B6158]" : "text-white/50"
               }`}
             >
-              Admin
+              Login
             </a>
             <button
               onClick={() => handleNavClick("#contact")}

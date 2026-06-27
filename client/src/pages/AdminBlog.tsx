@@ -1,17 +1,15 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { trpc } from "@/lib/trpc";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { useLocation } from "wouter";
 
 export default function AdminBlog() {
-  const { user } = useAuth();
   const [, setLocation] = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [articles, setArticles] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -27,6 +25,11 @@ export default function AdminBlog() {
       setLocation("/admin/login");
     } else {
       setIsLoggedIn(true);
+      // Load articles from localStorage
+      const saved = localStorage.getItem("blogArticles");
+      if (saved) {
+        setArticles(JSON.parse(saved));
+      }
     }
   }, [setLocation]);
 
@@ -41,36 +44,42 @@ export default function AdminBlog() {
     );
   }
 
-  const createMutation = trpc.blog.create.useMutation();
-  const listQuery = trpc.blog.list.useQuery();
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await createMutation.mutateAsync({
-        ...formData,
-        readTime: formData.readTime || 5,
-      });
-      setFormData({
-        title: "",
-        slug: "",
-        category: "",
-        excerpt: "",
-        content: "",
-        readTime: 5,
-      });
-      setIsCreating(false);
-      // Refetch articles
-      listQuery.refetch();
-    } catch (error) {
-      console.error("Failed to create article:", error);
-    }
+    
+    const newArticle = {
+      id: Date.now(),
+      ...formData,
+      published: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updated = [...articles, newArticle];
+    setArticles(updated);
+    localStorage.setItem("blogArticles", JSON.stringify(updated));
+
+    // Reset form
+    setFormData({
+      title: "",
+      slug: "",
+      category: "",
+      excerpt: "",
+      content: "",
+      readTime: 5,
+    });
+    setIsCreating(false);
   };
 
   const handleLogout = () => {
     sessionStorage.removeItem("adminLoggedIn");
     sessionStorage.removeItem("adminUsername");
     setLocation("/");
+  };
+
+  const handleDelete = (id: number) => {
+    const updated = articles.filter((a) => a.id !== id);
+    setArticles(updated);
+    localStorage.setItem("blogArticles", JSON.stringify(updated));
   };
 
   return (
@@ -169,10 +178,9 @@ export default function AdminBlog() {
               <div className="flex gap-3">
                 <Button
                   type="submit"
-                  disabled={createMutation.isPending}
                   className="bg-[#8b0000] hover:bg-[#6b0000]"
                 >
-                  {createMutation.isPending ? "Creating..." : "Create Article"}
+                  Create Article
                 </Button>
                 <Button
                   type="button"
@@ -199,11 +207,9 @@ export default function AdminBlog() {
         {/* Articles List */}
         <div>
           <h2 className="text-2xl font-bold text-[#1A1513] mb-6">Articles</h2>
-          {listQuery.isLoading ? (
-            <p className="text-[#6B6158]">Loading articles...</p>
-          ) : listQuery.data && listQuery.data.length > 0 ? (
+          {articles.length > 0 ? (
             <div className="space-y-4">
-              {listQuery.data.map((article) => (
+              {articles.map((article) => (
                 <Card key={article.id} className="p-6 border-2 border-[#E6DFD5]">
                   <div className="flex justify-between items-start">
                     <div>
@@ -219,7 +225,12 @@ export default function AdminBlog() {
                       <Button variant="outline" size="sm" className="border-[#E6DFD5]">
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm" className="border-[#E6DFD5] text-red-600">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="border-[#E6DFD5] text-red-600"
+                        onClick={() => handleDelete(article.id)}
+                      >
                         Delete
                       </Button>
                     </div>
