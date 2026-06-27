@@ -143,21 +143,7 @@ export default function AdminBlog() {
   };
 
   const handleEdit = (article: any) => {
-    setFormData({
-      title: article.title,
-      slug: article.slug,
-      categories: article.categories || [],
-      excerpt: article.excerpt,
-      content: article.content,
-      readTime: article.readTime,
-      featured: article.featured || false,
-    });
-    setIsEditing(article.id);
-    setIsCreating(true);
-    // Scroll to form
-    setTimeout(() => {
-      document.querySelector('[data-form-section]')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+    setLocation(`/admin/blog/edit/${article.id}`);
   };
 
   return (
@@ -458,6 +444,14 @@ export default function AdminBlog() {
                       >
                         Edit
                       </Button>
+                      <a
+                        href={`/blog/${article.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-[#8b0000] hover:text-[#6b0000] underline"
+                      >
+                        View Post →
+                      </a>
                       <Button
                         variant="outline"
                         size="sm"

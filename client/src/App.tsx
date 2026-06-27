@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import AdminBlog from "./pages/AdminBlog";
 import AdminLogin from "./pages/AdminLogin";
 import ArticleDetail from "./pages/ArticleDetail";
+import EditArticle from "./pages/EditArticle";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/blog/:slug" component={ArticleDetail} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/blog" component={AdminBlog} />
+      <Route path="/admin/blog/edit/:id" component={EditArticle} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
