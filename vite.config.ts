@@ -68,12 +68,6 @@ function writeToLogFile(source: LogSource, entries: unknown[]) {
   trimLogFile(logPath, MAX_LOG_SIZE_BYTES);
 }
 
-/**
- * Vite plugin to collect browser debug logs
- * - POST /__manus__/logs: Browser sends logs, written directly to files
- * - Files: browserConsole.log, networkRequests.log, sessionReplay.log
- * - Auto-trimmed when exceeding 1MB (keeps newest entries)
- */
 function vitePluginManusDebugCollector(): Plugin {
   return {
     name: "manus-debug-collector",
@@ -98,14 +92,12 @@ function vitePluginManusDebugCollector(): Plugin {
     },
 
     configureServer(server: ViteDevServer) {
-      // POST /__manus__/logs: Browser sends logs (written directly to files)
       server.middlewares.use("/__manus__/logs", (req, res, next) => {
         if (req.method !== "POST") {
           return next();
         }
 
         const handlePayload = (payload: any) => {
-          // Write logs directly to files
           if (payload.consoleLogs?.length > 0) {
             writeToLogFile("browserConsole", payload.consoleLogs);
           }
@@ -154,14 +146,9 @@ const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(
 
 export default defineConfig({
   plugins,
-  // COMPREHENSIVE REWRITE TO FORCE GLOBAL STRING SUBSTITUTION DURING COMPILATION
+  // SAFE DEFINE BLOCK WITHOUT MACRO CONFLICTS
   define: {
     "process.env.VITE_API_URL": JSON.stringify("https://lean-consulting.vercel.app"),
-    "process.env.VITE_ANALYTICS_ENDPOINT": JSON.stringify("https://lean-consulting.vercel.app"),
-    "process.env.OAUTH_SERVER_URL": JSON.stringify("https://lean-consulting.vercel.app"),
-    "import.meta.env.VITE_API_URL": JSON.stringify("https://lean-consulting.vercel.app"),
-    "import.meta.env.VITE_ANALYTICS_ENDPOINT": JSON.stringify("https://lean-consulting.vercel.app"),
-    "import.meta.env.OAUTH_SERVER_URL": JSON.stringify("https://lean-consulting.vercel.app"),
   },
   resolve: {
     alias: {
