@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import RichTextEditor from "@/components/RichTextEditor";
+import HtmlEditor from "@/components/HtmlEditor";
 import { ArrowLeft, Save } from "lucide-react";
 
 interface Article {
@@ -313,9 +313,9 @@ export default function EditArticle() {
             {/* Content Editor */}
             <Card className="p-6 border-2 border-[#E6DFD5]">
               <h2 className="text-xl font-bold text-[#1A1513] mb-4">Content</h2>
-              <RichTextEditor
+              <HtmlEditor
                 value={formData.content}
-                onChange={(content) => setFormData({ ...formData, content })}
+                onChange={(content: string) => setFormData({ ...formData, content })}
               />
             </Card>
 

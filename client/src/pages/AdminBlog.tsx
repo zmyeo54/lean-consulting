@@ -135,9 +135,31 @@ export default function AdminBlog() {
   };
 
   const handleToggleFeatured = (id: number) => {
-    const updated = articles.map((a) =>
-      a.id === id ? { ...a, featured: !a.featured } : a
-    );
+    const updated = articles.map((a) => {
+      if (a.id === id) {
+        if (a.featured) {
+          // Unfeature
+          return { ...a, featured: false, featuredRank: null };
+        } else {
+          // Feature - find next available rank (1, 2, or 3)
+          const takenRanks = articles
+            .filter((art) => art.featured)
+            .map((art) => art.featuredRank || 1)
+            .sort();
+          
+          let nextRank = 1;
+          for (let i = 1; i <= 3; i++) {
+            if (!takenRanks.includes(i)) {
+              nextRank = i;
+              break;
+            }
+          }
+          
+          return { ...a, featured: true, featuredRank: nextRank };
+        }
+      }
+      return a;
+    });
     setArticles(updated);
     localStorage.setItem("blogArticles", JSON.stringify(updated));
   };
@@ -396,7 +418,7 @@ export default function AdminBlog() {
                         </h3>
                         {article.featured && (
                           <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
-                            FEATURED
+                            FEATURED #{article.featuredRank || 1}
                           </span>
                         )}
                         <span
@@ -413,17 +435,28 @@ export default function AdminBlog() {
                         {article.categories?.join(", ") || "No categories"} •{" "}
                         {article.readTime} min read
                       </p>
+                      <p className="text-xs text-[#6B6158] mb-2">
+                        Published: {new Date(article.publishDate || article.createdAt).toLocaleDateString()}
+                      </p>
                       <p className="text-sm text-[#6B6158] line-clamp-2">
                         {article.excerpt}
                       </p>
                     </div>
                     <div className="flex gap-2 flex-col">
+                      <a
+                        href={`/blog/${article.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-[#8b0000] hover:text-[#6b0000] underline font-semibold"
+                      >
+                        View Post →
+                      </a>
                       <Button
                         onClick={() => handleToggleFeatured(article.id)}
                         className={article.featured ? "bg-purple-600 hover:bg-purple-700" : "bg-gray-400 hover:bg-gray-500"}
                         size="sm"
                       >
-                        {article.featured ? "Unfeature" : "Feature"}
+                        {article.featured ? `Unfeature (Rank: ${article.featuredRank || 1})` : "Feature"}
                       </Button>
                       <Button
                         onClick={() => handleTogglePublish(article.id)}
@@ -444,14 +477,6 @@ export default function AdminBlog() {
                       >
                         Edit
                       </Button>
-                      <a
-                        href={`/blog/${article.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-[#8b0000] hover:text-[#6b0000] underline"
-                      >
-                        View Post →
-                      </a>
                       <Button
                         variant="outline"
                         size="sm"
