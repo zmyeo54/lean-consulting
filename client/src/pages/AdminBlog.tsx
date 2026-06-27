@@ -4,31 +4,43 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import { migrateExistingBlogPosts } from "@/lib/blogMigration";
 
 export default function AdminBlog() {
   const [, setLocation] = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [isEditing, setIsEditing] = useState<number | null>(null);
   const [articles, setArticles] = useState<any[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState("");
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
-    category: "",
+    categories: [] as string[],
     excerpt: "",
     content: "",
     readTime: 5,
   });
 
   useEffect(() => {
+    // Run migration first to import existing blog posts
+    migrateExistingBlogPosts();
+
     const loggedIn = sessionStorage.getItem("adminLoggedIn") === "true";
     if (!loggedIn) {
       setLocation("/admin/login");
     } else {
       setIsLoggedIn(true);
-      // Load articles from localStorage
-      const saved = localStorage.getItem("blogArticles");
-      if (saved) {
-        setArticles(JSON.parse(saved));
+      // Load articles and categories from localStorage
+      const savedArticles = localStorage.getItem("blogArticles");
+      if (savedArticles) {
+        setArticles(JSON.parse(savedArticles));
+      }
+      const savedCategories = localStorage.getItem("blogCategories");
+      if (savedCategories) {
+        setCategories(JSON.parse(savedCategories));
       }
     }
   }, [setLocation]);
@@ -44,25 +56,54 @@ export default function AdminBlog() {
     );
   }
 
+  const handleAddCategory = () => {
+    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
+      const updated = [...categories, newCategory.trim()];
+      setCategories(updated);
+      localStorage.setItem("blogCategories", JSON.stringify(updated));
+      setNewCategory("");
+      setShowNewCategoryInput(false);
+    }
+  };
+
+  const handleToggleCategory = (category: string) => {
+    const updated = formData.categories.includes(category)
+      ? formData.categories.filter((c) => c !== category)
+      : [...formData.categories, category];
+    setFormData({ ...formData, categories: updated });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newArticle = {
-      id: Date.now(),
-      ...formData,
-      published: false,
-      createdAt: new Date().toISOString(),
-    };
 
-    const updated = [...articles, newArticle];
-    setArticles(updated);
-    localStorage.setItem("blogArticles", JSON.stringify(updated));
+    if (isEditing) {
+      // Update existing article
+      const updated = articles.map((a) =>
+        a.id === isEditing
+          ? { ...a, ...formData, updatedAt: new Date().toISOString() }
+          : a
+      );
+      setArticles(updated);
+      localStorage.setItem("blogArticles", JSON.stringify(updated));
+      setIsEditing(null);
+    } else {
+      // Create new article
+      const newArticle = {
+        id: Date.now(),
+        ...formData,
+        published: false,
+        createdAt: new Date().toISOString(),
+      };
+      const updated = [...articles, newArticle];
+      setArticles(updated);
+      localStorage.setItem("blogArticles", JSON.stringify(updated));
+    }
 
     // Reset form
     setFormData({
       title: "",
       slug: "",
-      category: "",
+      categories: [],
       excerpt: "",
       content: "",
       readTime: 5,
@@ -82,6 +123,27 @@ export default function AdminBlog() {
     localStorage.setItem("blogArticles", JSON.stringify(updated));
   };
 
+  const handleTogglePublish = (id: number) => {
+    const updated = articles.map((a) =>
+      a.id === id ? { ...a, published: !a.published } : a
+    );
+    setArticles(updated);
+    localStorage.setItem("blogArticles", JSON.stringify(updated));
+  };
+
+  const handleEdit = (article: any) => {
+    setFormData({
+      title: article.title,
+      slug: article.slug,
+      categories: article.categories || [],
+      excerpt: article.excerpt,
+      content: article.content,
+      readTime: article.readTime,
+    });
+    setIsEditing(article.id);
+    setIsCreating(true);
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF7F2] py-12">
       <div className="max-w-6xl mx-auto px-6">
@@ -99,29 +161,39 @@ export default function AdminBlog() {
           </Button>
         </div>
 
-        {/* Create Article Form */}
+        {/* Create/Edit Article Form */}
         {isCreating && (
           <Card className="p-8 mb-8 border-2 border-[#D4AF37]">
-            <h2 className="text-2xl font-bold text-[#1A1513] mb-6">Create New Article</h2>
+            <h2 className="text-2xl font-bold text-[#1A1513] mb-6">
+              {isEditing ? "Edit Article" : "Create New Article"}
+            </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-[#1A1513] mb-2">Title</label>
+                  <label className="block text-sm font-semibold text-[#1A1513] mb-2">
+                    Title
+                  </label>
                   <Input
                     type="text"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
                     placeholder="Article title"
                     required
                     className="border-[#E6DFD5]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-[#1A1513] mb-2">Slug</label>
+                  <label className="block text-sm font-semibold text-[#1A1513] mb-2">
+                    Slug
+                  </label>
                   <Input
                     type="text"
                     value={formData.slug}
-                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, slug: e.target.value })
+                    }
                     placeholder="article-slug"
                     required
                     className="border-[#E6DFD5]"
@@ -129,24 +201,95 @@ export default function AdminBlog() {
                 </div>
               </div>
 
+              {/* Category Management */}
+              <div>
+                <label className="block text-sm font-semibold text-[#1A1513] mb-3">
+                  Categories (Select or Create New)
+                </label>
+                <div className="space-y-3">
+                  {/* Existing Categories */}
+                  {categories.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {categories.map((cat) => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => handleToggleCategory(cat)}
+                          className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                            formData.categories.includes(cat)
+                              ? "bg-[#8b0000] text-white"
+                              : "bg-[#E6DFD5] text-[#1A1513] hover:bg-[#D4AF37]"
+                          }`}
+                        >
+                          {cat}
+                          {formData.categories.includes(cat) && " ✓"}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Add New Category */}
+                  {showNewCategoryInput ? (
+                    <div className="flex gap-2">
+                      <Input
+                        type="text"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        placeholder="New category name"
+                        className="border-[#E6DFD5]"
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleAddCategory();
+                          }
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleAddCategory}
+                        className="bg-[#D4AF37] hover:bg-[#c9a030] text-[#1A1513]"
+                      >
+                        Add
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          setShowNewCategoryInput(false);
+                          setNewCategory("");
+                        }}
+                        variant="outline"
+                        className="border-[#E6DFD5]"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={() => setShowNewCategoryInput(true)}
+                      variant="outline"
+                      className="border-[#D4AF37] text-[#8b0000] hover:bg-[#FAF7F2]"
+                    >
+                      + Create New Category
+                    </Button>
+                  )}
+                </div>
+              </div>
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-[#1A1513] mb-2">Category</label>
-                  <Input
-                    type="text"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    placeholder="e.g., ERP, Implementation"
-                    required
-                    className="border-[#E6DFD5]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-[#1A1513] mb-2">Read Time (minutes)</label>
+                  <label className="block text-sm font-semibold text-[#1A1513] mb-2">
+                    Read Time (minutes)
+                  </label>
                   <Input
                     type="number"
                     value={formData.readTime}
-                    onChange={(e) => setFormData({ ...formData, readTime: parseInt(e.target.value) || 5 })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        readTime: parseInt(e.target.value) || 5,
+                      })
+                    }
                     min="1"
                     className="border-[#E6DFD5]"
                   />
@@ -154,25 +297,78 @@ export default function AdminBlog() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-[#1A1513] mb-2">Excerpt</label>
+                <label className="block text-sm font-semibold text-[#1A1513] mb-2">
+                  Excerpt
+                </label>
                 <Textarea
                   value={formData.excerpt}
-                  onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, excerpt: e.target.value })
+                  }
                   placeholder="Brief summary of the article"
                   className="border-[#E6DFD5]"
+                  rows={3}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-[#1A1513] mb-2">Content</label>
-                <Textarea
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  placeholder="Full article content (supports markdown)"
-                  required
-                  rows={10}
-                  className="border-[#E6DFD5]"
-                />
+                <label className="block text-sm font-semibold text-[#1A1513] mb-2">
+                  Content (Rich Text)
+                </label>
+                <div className="border-2 border-[#E6DFD5] rounded-lg p-4 bg-white">
+                  <div className="mb-3 flex gap-2 flex-wrap border-b pb-3">
+                    <button
+                      type="button"
+                      onClick={() => insertMarkdown("**", "**", "bold")}
+                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm font-bold"
+                      title="Bold"
+                    >
+                      B
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertMarkdown("_", "_", "italic")}
+                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm italic"
+                      title="Italic"
+                    >
+                      I
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertMarkdown("[", "](url)", "link")}
+                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm underline"
+                      title="Link"
+                    >
+                      Link
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertMarkdown("# ", "\n", "heading")}
+                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm font-bold"
+                      title="Heading"
+                    >
+                      H1
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertMarkdown("- ", "\n", "list")}
+                      className="px-3 py-1 bg-[#E6DFD5] hover:bg-[#D4AF37] rounded text-sm"
+                      title="List"
+                    >
+                      • List
+                    </button>
+                  </div>
+                  <Textarea
+                    value={formData.content}
+                    onChange={(e) =>
+                      setFormData({ ...formData, content: e.target.value })
+                    }
+                    placeholder="Full article content (supports markdown: **bold**, _italic_, [link](url), # heading, - list)"
+                    required
+                    rows={12}
+                    className="border-0 focus:ring-0 font-mono text-sm"
+                  />
+                </div>
               </div>
 
               <div className="flex gap-3">
@@ -180,11 +376,22 @@ export default function AdminBlog() {
                   type="submit"
                   className="bg-[#8b0000] hover:bg-[#6b0000]"
                 >
-                  Create Article
+                  {isEditing ? "Update Article" : "Create Article"}
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => setIsCreating(false)}
+                  onClick={() => {
+                    setIsCreating(false);
+                    setIsEditing(null);
+                    setFormData({
+                      title: "",
+                      slug: "",
+                      categories: [],
+                      excerpt: "",
+                      content: "",
+                      readTime: 5,
+                    });
+                  }}
                   variant="outline"
                   className="border-[#E6DFD5]"
                 >
@@ -211,23 +418,53 @@ export default function AdminBlog() {
             <div className="space-y-4">
               {articles.map((article) => (
                 <Card key={article.id} className="p-6 border-2 border-[#E6DFD5]">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-bold text-[#1A1513]">{article.title}</h3>
-                      <p className="text-sm text-[#6B6158] mt-1">
-                        {article.category} • {article.readTime} min read
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-bold text-[#1A1513]">
+                          {article.title}
+                        </h3>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            article.published
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
+                          }`}
+                        >
+                          {article.published ? "PUBLISHED" : "DRAFT"}
+                        </span>
+                      </div>
+                      <p className="text-sm text-[#6B6158] mb-2">
+                        {article.categories?.join(", ") || "No categories"} •{" "}
+                        {article.readTime} min read
                       </p>
-                      <p className="text-sm text-[#8b0000] mt-2">
-                        Status: {article.published ? "Published" : "Draft"}
+                      <p className="text-sm text-[#6B6158] line-clamp-2">
+                        {article.excerpt}
                       </p>
                     </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="border-[#E6DFD5]">
+                    <div className="flex gap-2 flex-col">
+                      <Button
+                        onClick={() => handleTogglePublish(article.id)}
+                        className={
+                          article.published
+                            ? "bg-green-600 hover:bg-green-700"
+                            : "bg-yellow-600 hover:bg-yellow-700"
+                        }
+                        size="sm"
+                      >
+                        {article.published ? "Unpublish" : "Publish"}
+                      </Button>
+                      <Button
+                        onClick={() => handleEdit(article)}
+                        variant="outline"
+                        size="sm"
+                        className="border-[#E6DFD5]"
+                      >
                         Edit
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         className="border-[#E6DFD5] text-red-600"
                         onClick={() => handleDelete(article.id)}
                       >
@@ -240,11 +477,47 @@ export default function AdminBlog() {
             </div>
           ) : (
             <Card className="p-8 text-center">
-              <p className="text-[#6B6158]">No articles yet. Create one to get started!</p>
+              <p className="text-[#6B6158]">
+                No articles yet. Create one to get started!
+              </p>
             </Card>
           )}
         </div>
       </div>
     </div>
   );
+
+  function insertMarkdown(before: string, after: string, type: string) {
+    const textarea = document.querySelector(
+      'textarea[placeholder*="Full article"]'
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = formData.content;
+    const selectedText = text.substring(start, end) || "text";
+
+    let newText = "";
+    if (type === "link") {
+      newText =
+        text.substring(0, start) +
+        `[${selectedText}](url)` +
+        text.substring(end);
+    } else {
+      newText =
+        text.substring(0, start) +
+        before +
+        selectedText +
+        after +
+        text.substring(end);
+    }
+
+    setFormData({ ...formData, content: newText });
+    setTimeout(() => {
+      textarea.focus();
+      textarea.selectionStart = start + before.length;
+      textarea.selectionEnd = start + before.length + selectedText.length;
+    }, 0);
+  }
 }
