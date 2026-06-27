@@ -17,7 +17,7 @@ export default function AboutSection() {
             >
               Lean Consulting is a fast-growing, premium platform-implementation startup 
               specializing in 
-              <span style={{ color: "#8b0000" }}> fast-track configurations</span> for Odoo, HubSpot, and Salesforce.
+              <span style={{ color: "#8b0000" }}> fast-track Odoo configurations</span>.
             </p>
             <p
               className="text-base text-[#6B6158] leading-relaxed"

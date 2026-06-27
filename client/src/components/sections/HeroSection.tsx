@@ -55,8 +55,7 @@ export default function HeroSection() {
             className="animate-fade-up animate-fade-up-delay-2 text-lg md:text-xl text-white/75 max-w-2xl leading-relaxed mb-12"
             style={{ fontFamily: "'Inter', 'Noto Sans', sans-serif", fontWeight: 400 }}
           >
-            Premium platform implementation for Odoo, HubSpot, and Salesforce. 
-            Fast-track configurations. Zero engineering waste. Standard-first discipline.
+            Premium platform implementation for Odoo. Fast-track configurations. Zero engineering waste. Standard-first discipline.
           </p>
 
           {/* CTAs */}
