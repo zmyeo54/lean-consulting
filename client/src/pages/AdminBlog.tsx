@@ -134,34 +134,58 @@ export default function AdminBlog() {
     localStorage.setItem("blogArticles", JSON.stringify(updated));
   };
 
-  const handleToggleFeatured = (id: number) => {
+  const handleSetFeaturedRank = (id: number, rank: number | null) => {
     const updated = articles.map((a) => {
       if (a.id === id) {
-        if (a.featured) {
-          // Unfeature
+        if (rank === null) {
           return { ...a, featured: false, featuredRank: null };
         } else {
-          // Feature - find next available rank (1, 2, or 3)
-          const takenRanks = articles
-            .filter((art) => art.featured)
-            .map((art) => art.featuredRank || 1)
-            .sort();
-          
-          let nextRank = 1;
-          for (let i = 1; i <= 3; i++) {
-            if (!takenRanks.includes(i)) {
-              nextRank = i;
-              break;
-            }
+          // If rank is taken, swap with existing article
+          const existingWithRank = articles.find((art) => art.featured && art.featuredRank === rank && art.id !== id);
+          if (existingWithRank) {
+            // Swap: give existing article the old rank of current article
+            return { ...a, featured: true, featuredRank: rank };
           }
-          
-          return { ...a, featured: true, featuredRank: nextRank };
+          return { ...a, featured: true, featuredRank: rank };
         }
       }
+      
+      // Handle rank swapping
+      if (rank !== null && a.featured && a.featuredRank === rank && a.id !== id) {
+        const oldRankArticle = articles.find((art) => art.id === id);
+        return { ...a, featuredRank: oldRankArticle?.featuredRank || null };
+      }
+      
       return a;
     });
     setArticles(updated);
     localStorage.setItem("blogArticles", JSON.stringify(updated));
+  };
+
+  const handleToggleFeatured = (id: number) => {
+    const article = articles.find((a) => a.id === id);
+    if (article?.featured) {
+      handleSetFeaturedRank(id, null);
+    } else {
+      const takenRanks = articles
+        .filter((a) => a.featured)
+        .map((a) => a.featuredRank)
+        .filter((r) => r !== null && r !== undefined);
+      
+      let nextRank = 1;
+      for (let i = 1; i <= 3; i++) {
+        if (!takenRanks.includes(i)) {
+          nextRank = i;
+          break;
+        }
+      }
+      
+      handleSetFeaturedRank(id, nextRank);
+    }
+  };
+
+  const handleChangeRank = (id: number, newRank: number) => {
+    handleSetFeaturedRank(id, newRank);
   };
 
   const handleEdit = (article: any) => {
@@ -451,13 +475,34 @@ export default function AdminBlog() {
                       >
                         View Post →
                       </a>
-                      <Button
-                        onClick={() => handleToggleFeatured(article.id)}
-                        className={article.featured ? "bg-purple-600 hover:bg-purple-700" : "bg-gray-400 hover:bg-gray-500"}
-                        size="sm"
-                      >
-                        {article.featured ? `Unfeature (Rank: ${article.featuredRank || 1})` : "Feature"}
-                      </Button>
+                      {article.featured ? (
+                        <div className="flex gap-2">
+                          <select
+                            value={article.featuredRank || 1}
+                            onChange={(e) => handleChangeRank(article.id, parseInt(e.target.value))}
+                            className="flex-1 px-2 py-1 border border-[#E6DFD5] rounded text-sm"
+                          >
+                            <option value={1}>Rank #1</option>
+                            <option value={2}>Rank #2</option>
+                            <option value={3}>Rank #3</option>
+                          </select>
+                          <Button
+                            onClick={() => handleToggleFeatured(article.id)}
+                            className="bg-purple-600 hover:bg-purple-700"
+                            size="sm"
+                          >
+                            Unfeature
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={() => handleToggleFeatured(article.id)}
+                          className="bg-gray-400 hover:bg-gray-500 w-full"
+                          size="sm"
+                        >
+                          Feature
+                        </Button>
+                      )}
                       <Button
                         onClick={() => handleTogglePublish(article.id)}
                         className={

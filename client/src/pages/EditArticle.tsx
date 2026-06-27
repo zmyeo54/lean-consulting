@@ -38,6 +38,7 @@ export default function EditArticle() {
   const [newCategory, setNewCategory] = useState("");
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     // Load article data
@@ -225,15 +226,47 @@ export default function EditArticle() {
                   type="checkbox"
                   id="featured"
                   checked={formData.featured}
-                  onChange={(e) =>
-                    setFormData({ ...formData, featured: e.target.checked })
-                  }
+                  onChange={() => setShowConfirm(true)}
                   className="w-5 h-5 cursor-pointer"
                 />
                 <label htmlFor="featured" className="font-semibold text-[#1A1513] cursor-pointer">
                   ⭐ Feature this post
                 </label>
               </div>
+              
+              {/* Feature Confirmation Dialog */}
+              {showConfirm && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                  <Card className="p-6 max-w-sm">
+                    <h3 className="text-lg font-bold text-[#1A1513] mb-4">
+                      {formData.featured ? "Unfeature Post?" : "Feature This Post?"}
+                    </h3>
+                    <p className="text-[#6B6158] mb-6">
+                      {formData.featured
+                        ? "This post will no longer be featured on the homepage."
+                        : "This post will be featured on the homepage with the next available ranking."}
+                    </p>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={() => {
+                          setFormData({ ...formData, featured: !formData.featured });
+                          setShowConfirm(false);
+                        }}
+                        className="flex-1 bg-[#8b0000] hover:bg-[#6b0000] text-white"
+                      >
+                        Confirm
+                      </Button>
+                      <Button
+                        onClick={() => setShowConfirm(false)}
+                        variant="outline"
+                        className="flex-1 border-[#E6DFD5]"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </Card>
+                </div>
+              )}
 
               {/* Categories */}
               <div className="mb-4">
@@ -242,17 +275,33 @@ export default function EditArticle() {
                 </label>
                 <div className="flex flex-wrap gap-2 mb-3">
                   {categories.map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => handleToggleCategory(cat)}
-                      className={`px-3 py-1 rounded-full text-sm font-semibold transition ${
-                        formData.categories.includes(cat)
-                          ? "bg-[#D4AF37] text-[#1A1513]"
-                          : "bg-[#E6DFD5] text-[#6B6158] hover:bg-[#D4AF37]"
-                      }`}
-                    >
-                      {cat}
-                    </button>
+                    <div key={cat} className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleToggleCategory(cat)}
+                        className={`px-3 py-1 rounded-full text-sm font-semibold transition ${
+                          formData.categories.includes(cat)
+                            ? "bg-[#D4AF37] text-[#1A1513]"
+                            : "bg-[#E6DFD5] text-[#6B6158] hover:bg-[#D4AF37]"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                      <button
+                        onClick={() => {
+                          const updatedCats = categories.filter((c) => c !== cat);
+                          setCategories(updatedCats);
+                          localStorage.setItem("blogCategories", JSON.stringify(updatedCats));
+                          setFormData({
+                            ...formData,
+                            categories: formData.categories.filter((c) => c !== cat),
+                          });
+                        }}
+                        className="text-red-600 hover:text-red-800 text-xs font-bold"
+                        title="Delete category"
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
                 {showNewCategoryInput ? (
@@ -341,7 +390,7 @@ export default function EditArticle() {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-xs font-semibold text-[#D4AF37] uppercase">
-                      {formData.categories.join(", ") || "No categories"}
+                      {formData.categories.length > 0 ? formData.categories.join(", ") : "Article"}
                     </span>
                     <span className="text-xs text-[#6B6158]">• {formData.readTime} min read</span>
                   </div>

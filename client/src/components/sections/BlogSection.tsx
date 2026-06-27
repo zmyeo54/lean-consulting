@@ -20,13 +20,15 @@ export default function BlogSection() {
       // Filter only published articles
       const published = allArticles.filter((a: any) => a.published === true);
       
-      // Sort: Featured first, then by publish date (newest first)
+      // Sort: Featured first (by rank), then by publish date
       const sorted = published.sort((a: any, b: any) => {
-        // Featured articles first
         if (a.featured && !b.featured) return -1;
         if (!a.featured && b.featured) return 1;
-        
-        // Then by publish date (newest first)
+        if (a.featured && b.featured) {
+          const rankA = a.featuredRank || 999;
+          const rankB = b.featuredRank || 999;
+          return rankA - rankB;
+        }
         const dateA = new Date(a.publishDate || a.createdAt || 0).getTime();
         const dateB = new Date(b.publishDate || b.createdAt || 0).getTime();
         return dateB - dateA;
@@ -74,17 +76,13 @@ export default function BlogSection() {
                 <div className="bg-[#FAF7F2] rounded-lg p-6 h-full hover:shadow-lg transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex flex-wrap gap-2">
-                      {art.categories && art.categories.length > 0 && (
-                        <>
-                          <span className="text-xs font-bold text-[#8b0000] uppercase">
-                            {art.categories[0]}
-                          </span>
-                          {art.featured && (
-                            <span className="text-xs font-bold text-purple-600 uppercase">
-                              ⭐ Featured
-                            </span>
-                          )}
-                        </>
+                      <span className="text-xs font-bold text-[#8b0000] uppercase">
+                        {art.categories && art.categories.length > 0 ? art.categories[0] : "Article"}
+                      </span>
+                      {art.featured && (
+                        <span className="text-xs font-bold text-purple-600 uppercase">
+                          ⭐ Featured
+                        </span>
                       )}
                     </div>
                     <span className="text-xs text-[#6B6158]">#{index + 1}</span>
