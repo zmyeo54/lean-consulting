@@ -28,8 +28,8 @@ export default function AISection() {
           <div>
             <div className="section-label mb-6">Practical AI Adoption</div>
             <h2
-              className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-4xl md:text-5xl font-bold text-[#1A1513] leading-tight mb-6"
+              style={{ fontFamily: "'Montserrat', 'Questrial', sans-serif" }}
             >
               Practical AI adoption within your ERP.
             </h2>
