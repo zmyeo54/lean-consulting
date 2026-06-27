@@ -22,6 +22,7 @@ export default function AdminBlog() {
     excerpt: "",
     content: "",
     readTime: 5,
+    featured: false,
   });
 
   useEffect(() => {
@@ -107,6 +108,7 @@ export default function AdminBlog() {
       excerpt: "",
       content: "",
       readTime: 5,
+      featured: false,
     });
     setIsCreating(false);
   };
@@ -131,6 +133,14 @@ export default function AdminBlog() {
     localStorage.setItem("blogArticles", JSON.stringify(updated));
   };
 
+  const handleToggleFeatured = (id: number) => {
+    const updated = articles.map((a) =>
+      a.id === id ? { ...a, featured: !a.featured } : a
+    );
+    setArticles(updated);
+    localStorage.setItem("blogArticles", JSON.stringify(updated));
+  };
+
   const handleEdit = (article: any) => {
     setFormData({
       title: article.title,
@@ -139,6 +149,7 @@ export default function AdminBlog() {
       excerpt: article.excerpt,
       content: article.content,
       readTime: article.readTime,
+      featured: article.featured || false,
     });
     setIsEditing(article.id);
     setIsCreating(true);
@@ -296,6 +307,21 @@ export default function AdminBlog() {
                 </div>
               </div>
 
+              <div className="flex items-center gap-3 p-4 bg-[#FAF7F2] rounded-lg border-2 border-[#D4AF37]">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={formData.featured}
+                  onChange={(e) =>
+                    setFormData({ ...formData, featured: e.target.checked })
+                  }
+                  className="w-5 h-5 cursor-pointer"
+                />
+                <label htmlFor="featured" className="font-semibold text-[#1A1513] cursor-pointer">
+                  ⭐ Feature this post on the homepage
+                </label>
+              </div>
+
               <div>
                 <label className="block text-sm font-semibold text-[#1A1513] mb-2">
                   Excerpt
@@ -378,20 +404,21 @@ export default function AdminBlog() {
                 >
                   {isEditing ? "Update Article" : "Create Article"}
                 </Button>
-                <Button
-                  type="button"
-                  onClick={() => {
-                    setIsCreating(false);
-                    setIsEditing(null);
-                    setFormData({
-                      title: "",
-                      slug: "",
-                      categories: [],
-                      excerpt: "",
-                      content: "",
-                      readTime: 5,
-                    });
-                  }}
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setIsCreating(false);
+                      setIsEditing(null);
+                      setFormData({
+                        title: "",
+                        slug: "",
+                        categories: [],
+                        excerpt: "",
+                        content: "",
+                        readTime: 5,
+                        featured: false,
+                      });
+                    }}
                   variant="outline"
                   className="border-[#E6DFD5]"
                 >
@@ -420,10 +447,15 @@ export default function AdminBlog() {
                 <Card key={article.id} className="p-6 border-2 border-[#E6DFD5]">
                   <div className="flex justify-between items-start gap-4">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-3 mb-2 flex-wrap">
                         <h3 className="text-lg font-bold text-[#1A1513]">
                           {article.title}
                         </h3>
+                        {article.featured && (
+                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
+                            FEATURED
+                          </span>
+                        )}
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-bold ${
                             article.published
@@ -443,6 +475,13 @@ export default function AdminBlog() {
                       </p>
                     </div>
                     <div className="flex gap-2 flex-col">
+                      <Button
+                        onClick={() => handleToggleFeatured(article.id)}
+                        className={article.featured ? "bg-purple-600 hover:bg-purple-700" : "bg-gray-400 hover:bg-gray-500"}
+                        size="sm"
+                      >
+                        {article.featured ? "Unfeature" : "Feature"}
+                      </Button>
                       <Button
                         onClick={() => handleTogglePublish(article.id)}
                         className={

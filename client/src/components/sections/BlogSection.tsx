@@ -5,9 +5,12 @@
  */
 
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 
 export default function BlogSection() {
+  const [, setLocation] = useLocation();
   const [articles, setArticles] = useState<any[]>([]);
+  const [featuredArticles, setFeaturedArticles] = useState<any[]>([]);
 
   useEffect(() => {
     // Load published articles from localStorage
@@ -17,6 +20,10 @@ export default function BlogSection() {
       // Filter only published articles
       const published = allArticles.filter((a: any) => a.published === true);
       setArticles(published);
+      
+      // Filter featured articles
+      const featured = published.filter((a: any) => a.featured === true);
+      setFeaturedArticles(featured);
     }
   }, []);
 
@@ -30,7 +37,9 @@ export default function BlogSection() {
               Practical ERP guidance from the field.
             </h2>
           </div>
-          <button className="btn-press inline-flex items-center gap-2 text-sm font-semibold shrink-0 text-[#8b0000] hover:text-[#6b0000] transition-colors">
+          <button 
+            onClick={() => setLocation("/blog")}
+            className="btn-press inline-flex items-center gap-2 text-sm font-semibold shrink-0 text-[#8b0000] hover:text-[#6b0000] transition-colors">
             Read the blog
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path
@@ -49,6 +58,7 @@ export default function BlogSection() {
             {articles.slice(0, 3).map((art) => (
               <article
                 key={art.id}
+                onClick={() => setLocation(`/blog/${art.slug}`)}
                 className="card-hover group border-2 border-[#E6DFD5] rounded-lg overflow-hidden bg-white cursor-pointer hover:border-[#D4AF37] transition-all"
               >
                 {/* Top accent bar */}
